@@ -7,6 +7,8 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
 
 ## [Unreleased]
 
+## [0.1.0a2] — 2026-05-18
+
 ### Security
 
 - **bandit + vulture now run in both pre-commit and CI.** The
@@ -19,6 +21,16 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
   callbacks / signal handlers / OAuth field names that vulture
   can't infer from the import graph alone. Both hooks currently
   pass clean. Mirrors the rollout pattern from kaos-core.
+
+### Changed
+
+- **CI / supply-chain hardening pass.** Workflow actions pinned for
+  public-PR hardening, CycloneDX SBOM published as a release asset,
+  CODEOWNERS expansion + Dependabot + OpenSSF Scorecard wired up,
+  macOS-arm64 + Windows-x64 test legs added, repo standards docs
+  (`AGENTS.md`, `CONTRIBUTING.md`, `docs/standards/*`) landed, uv
+  dependency-freshness policy aligned with the rest of kaos-*. No
+  user-visible API change in this release.
 
 ## [0.1.0a1] - 2026-05-07
 
