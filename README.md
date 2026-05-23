@@ -8,7 +8,7 @@
 [![PyPI - Version](https://img.shields.io/pypi/v/kaos-names)](https://pypi.org/project/kaos-names/)
 [![Python](https://img.shields.io/pypi/pyversions/kaos-names)](https://pypi.org/project/kaos-names/)
 [![License](https://img.shields.io/pypi/l/kaos-names)](https://github.com/273v/kaos-names/blob/main/LICENSE)
-[![CI](https://github.com/273v/kaos-names/actions/workflows/ci.yml/badge.svg)](https://github.com/273v/kaos-names/actions/workflows/ci.yml)
+[![quality](https://github.com/273v/kaos-names/actions/workflows/quality.yml/badge.svg)](https://github.com/273v/kaos-names/actions/workflows/quality.yml)
 
 `kaos-names` is a tiny, dependency-free Python package that mints friendly,
 legal-flavored handles such as `sunny-docket-07` for sessions, traces, demo
