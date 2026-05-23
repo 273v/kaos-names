@@ -7,6 +7,9 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
 
 ## [Unreleased]
 
+## [0.1.0a3] — 2026-05-23
+
+audit-04 remediation bundle (Family C/D + F-001 SBOM honesty + F-003 contract drift pins).
 
 ### Changed
 
