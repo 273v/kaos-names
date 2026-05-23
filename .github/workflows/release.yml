@@ -83,6 +83,16 @@ jobs:
       # DIST_EXTENSIONS = {.whl, .tar.gz, .zip}), so the SBOM lives in
       # `sbom/` — NOT `dist/` — and ships only on the GitHub Release;
       # the Trusted Publisher PyPI upload is untouched.
+      #
+      # audit-04 F-001: generate the SBOM from a clean runtime-only
+      # install of the built wheel, NOT from `.venv` (which carries the
+      # dev group: pytest, ruff, ty, coverage, …). The previous SBOM
+      # listed those tools as components, falsely telling consumers
+      # that this zero-dependency leaf package depended on test/type/
+      # lint tooling. Re-use the `/tmp/smoke` venv from the smoke-test
+      # step (built one step above by `uv pip install <wheel>` with no
+      # dev deps) so the SBOM matches what `pip install kaos-names`
+      # actually pulls.
       - name: Generate CycloneDX SBOM (F8)
         run: |
           set -euo pipefail
@@ -94,7 +104,12 @@ jobs:
           PKG_NAME="kaos-names"
           SBOM_FILE="sbom/${PKG_NAME}-${PKG_VERSION}.cdx.json"
           # Pinned cyclonedx-bom (PyPA-blessed CycloneDX tooling for Python).
-          uvx --from cyclonedx-bom==7.3.0 cyclonedx-py environment .venv \
+          # `cyclonedx-py environment` enumerates everything pip resolved
+          # in the target venv. By pointing at `/tmp/smoke` (the clean
+          # runtime venv built one step above) we report only what a
+          # real `pip install kaos-names` user would see — not the dev
+          # group's test/type/lint tooling.
+          uvx --from cyclonedx-bom==7.3.0 cyclonedx-py environment /tmp/smoke \
             --pyproject pyproject.toml \
             --mc-type library \
             --of JSON \
@@ -102,17 +117,28 @@ jobs:
             --validate \
             -o "${SBOM_FILE}"
           ls -la sbom/
-          # Sanity: SBOM must have components — empty SBOM means the env
-          # wasn't synced and the SBOM is meaningless. Fail loudly so a
-          # broken SBOM step never silently ships an empty BOM.
+          # Runtime-honesty assertion (audit-04 F-001): a zero-dep
+          # package (`dependencies = []` in pyproject.toml) must produce
+          # an SBOM whose `components` array does NOT carry test/type/
+          # lint tooling. Only the package itself plus pip install
+          # plumbing (pip/setuptools/wheel) is allowed. The prior
+          # `.venv`-based SBOM had 9 dev-group components.
           uv run python -c "
           import json, sys
           d = json.load(open('${SBOM_FILE}'))
-          n = len(d.get('components', []))
+          comps = d.get('components', [])
+          n = len(comps)
           if n == 0:
               print('ERROR: SBOM has 0 components', file=sys.stderr)
               sys.exit(1)
-          print(f'SBOM OK: {n} components, specVersion={d.get(\"specVersion\")}, file=${SBOM_FILE}')
+          ALLOWED = {'pip', 'setuptools', 'wheel', 'kaos-names'}
+          leaks = [c.get('name') for c in comps if c.get('name') not in ALLOWED]
+          if leaks:
+              print(f'ERROR: SBOM leaks dev-only components: {leaks}', file=sys.stderr)
+              print('Expected only install plumbing (pip/setuptools/wheel) + the package itself.', file=sys.stderr)
+              print('See audit-04/kaos-names.md F-001.', file=sys.stderr)
+              sys.exit(1)
+          print(f'SBOM OK: {n} components ({[c.get(\"name\") for c in comps]}), specVersion={d.get(\"specVersion\")}, file=${SBOM_FILE}')
           "
 
       - name: Upload SBOM artifact (F8)
