@@ -7,6 +7,14 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
 
 ## [Unreleased]
 
+### Changed
+
+- `pyproject.toml` classifier bumped from `Development Status :: 3 - Alpha`
+  to `Development Status :: 5 - Production/Stable` to reflect the
+  0.1.0 GA release (WU-L #543) that froze the public API for the
+  0.1.x line. Closes audit-04/kaos-names.md Family D (classifier drift).
+
+
 ## [0.1.0a2] — 2026-05-18
 
 ### Security
