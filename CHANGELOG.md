@@ -14,6 +14,29 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
   0.1.0 GA release (WU-L #543) that froze the public API for the
   0.1.x line. Closes audit-04/kaos-names.md Family D (classifier drift).
 
+### Fixed
+
+- **Release SBOM now describes the runtime install, not the dev env.**
+  `.github/workflows/release.yml` previously ran
+  `cyclonedx-py environment .venv` after `uv sync --group dev`,
+  publishing a CycloneDX SBOM whose `components` array listed pytest,
+  ruff, ty, coverage, pluggy, packaging, iniconfig, Pygments, and
+  pytest-cov as dependencies of `kaos-names` — a zero-dep leaf package
+  per `pyproject.toml`. The SBOM is now generated from the existing
+  `/tmp/smoke` clean runtime venv (built by the smoke-test step from
+  the wheel with no dev group), so it reflects what `pip install
+  kaos-names` actually pulls.
+
+  Added a runtime-honesty assertion in the workflow: for this
+  `dependencies = []` package the SBOM components array must contain
+  only the package itself plus pip install plumbing
+  (`pip`/`setuptools`/`wheel`). Anything else (test/type/lint tooling)
+  fails the release build. Closes audit-04/kaos-names.md F-001.
+
+  Note: the existing `v0.1.0a2` SBOM asset on GitHub Releases remains
+  the contaminated artifact. Re-cut or replace it manually if the
+  project treats Release SBOMs as authoritative compliance artifacts;
+  per audit-04's "re-cut or replace" recommendation.
 
 ## [0.1.0a2] — 2026-05-18
 
