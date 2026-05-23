@@ -7,6 +7,24 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
 
 ## [Unreleased]
 
+## [0.1.0a4] — 2026-05-23
+
+Hotfix: SBOM assertion accepts 0 components from `uv venv`-based smoke env.
+
+### Fixed
+
+- **Release workflow SBOM assertion no longer rejects 0 components.**
+  audit-04 F-001 moved SBOM generation from `.venv` to `/tmp/smoke`
+  (a clean `uv venv` with only the built wheel). `uv venv` is more
+  minimal than virtualenv — it doesn't pre-install
+  pip/setuptools/wheel — so `cyclonedx-py environment` legitimately
+  reports 0 components for a zero-dep leaf package. The original
+  assertion treated 0 as error; 0 is the most runtime-honest answer
+  in this configuration. New assertion: allow N≥0, reject if any
+  test/type/lint tooling leaks. Original audit-04 intent preserved.
+  Re-cut as 0.1.0a4 because the original 0.1.0a3 tag had already
+  been pushed before the hotfix.
+
 ## [0.1.0a3] — 2026-05-23
 
 audit-04 remediation bundle (Family C/D + F-001 SBOM honesty + F-003 contract drift pins).
