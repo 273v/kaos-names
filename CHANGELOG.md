@@ -7,6 +7,7 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
 
 ## [Unreleased]
 
+
 ### Changed
 
 - `pyproject.toml` classifier bumped from `Development Status :: 3 - Alpha`
@@ -37,6 +38,25 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
   the contaminated artifact. Re-cut or replace it manually if the
   project treats Release SBOMs as authoritative compliance artifacts;
   per audit-04's "re-cut or replace" recommendation.
+
+### Tests
+
+- **audit-04 F-003 contract drift pins.** Added
+  `tests/unit/test_contract_drift_pins.py` (6 tests) pinning every
+  README-visible exact number and CLI JSON envelope key set:
+  - `DEFAULT_DESCRIPTORS` count == 120 (README.md:23-24)
+  - `DEFAULT_NOUNS` count == 327 (README.md:23-24)
+  - cartesian space == 3 884 760 (README.md:23-24)
+  - `kaos_names.__all__` matches the 6-symbol documented set
+    (README.md:109)
+  - `generate --json` envelope key set (7 keys: command, count,
+    names, separator, number_min, number_max, number_width)
+  - `vocabulary --json` envelope key set (5 keys: command,
+    descriptor_count, noun_count, descriptors, nouns)
+  Pre-existing tests only asserted broad lower bounds (`>= 100`,
+  `>= 300`); the new tests pin the exact numbers the README promises
+  so vocabulary tweaks or CLI refactors fail the gate instead of
+  silently making docs false. No public API or behavior change.
 
 ## [0.1.0a2] — 2026-05-18
 
