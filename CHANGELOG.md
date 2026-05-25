@@ -7,6 +7,14 @@ and this project follows Semantic Versioning while using pre-1.0 alpha releases.
 
 ## [Unreleased]
 
+## [0.1.0a5] — 2026-05-25
+
+Dependabot batch.
+
+### Dependabot
+
+- chore(deps-dev): bump the deps-minor group with 2 updates (#17)
+
 ## [0.1.0a4] — 2026-05-23
 
 Hotfix: SBOM assertion accepts 0 components from `uv venv`-based smoke env.
